@@ -5,18 +5,22 @@ import { BrowserRouter } from "react-router-dom";
 import NotesApp from "./components/NotesApp";
 
 //context
-import ThemeContextProvider from "./context/theme-context";
-import LocaleContextProvider from "./context/locale-context";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import ThemeContextProvider from "./providers/ThemeContextProvider";
+import LocaleContextProvider from "./providers/LocaleContextProvider";
+const queryClient = new QueryClient();
 
 //style
 import "./global.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
     <BrowserRouter>
-        <ThemeContextProvider>
-            <LocaleContextProvider>
-                <NotesApp />
-            </LocaleContextProvider>
-        </ThemeContextProvider>
+        <QueryClientProvider client={queryClient}>
+            <ThemeContextProvider>
+                <LocaleContextProvider>
+                    <NotesApp />
+                </LocaleContextProvider>
+            </ThemeContextProvider>
+        </QueryClientProvider>
     </BrowserRouter>,
 );

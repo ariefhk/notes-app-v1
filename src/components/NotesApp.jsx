@@ -1,7 +1,15 @@
+import { Route, Routes } from "react-router-dom";
+import HomePage from "../pages/HomePage";
+import LoginPage from "../pages/LoginPage";
+import RequiredAuthProvider from "../providers/RequiredAuthProvider";
+
 export default function NotesApp() {
     return (
-        <div>
-            <h1 className='font-poppins text-[100px] text-blue-600'>Hello World</h1>
-        </div>
+        <Routes>
+            <Route path='/login' element={<LoginPage />} />
+            <Route element={<RequiredAuthProvider />}>
+                <Route path='/' element={<HomePage />} />
+            </Route>
+        </Routes>
     );
 }

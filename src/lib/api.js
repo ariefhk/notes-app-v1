@@ -88,9 +88,9 @@ async function register({ name, email, password, ...config }) {
     return { error: false };
 }
 
-async function getUserLogged(...config) {
+async function getUserLogged() {
+    console.log(getAccessToken());
     const response = await axios.get(`${BASE_URL}/users/me`, {
-        ...config,
         headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${getAccessToken()}`,
@@ -98,6 +98,7 @@ async function getUserLogged(...config) {
     });
 
     const responseJson = await response.data;
+    // return responseJson;
 
     if (responseJson.status !== "success") {
         return { error: true, data: null };
