@@ -1,14 +1,13 @@
 // third party
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
-import PropTypes from "prop-types";
+import { useNavigate, Outlet } from "react-router-dom";
 
 // lib
 import { getAccessToken } from "../lib/api";
 
-export default function RequiredAuthProvider({ children }) {
+export default function RequiredAuthProvider() {
     const navigate = useNavigate();
-    const { isError } = useQuery({
+    const { isSuccess } = useQuery({
         retry: false,
         queryKey: ["check-user"],
         queryFn: async ({ signal }) => {
@@ -27,9 +26,5 @@ export default function RequiredAuthProvider({ children }) {
         },
     });
 
-    return !isError ?? children;
+    return isSuccess ? <Outlet /> : false;
 }
-
-RequiredAuthProvider.propTypes = {
-    children: PropTypes.node,
-};
