@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import useInput from "../hooks/useInput";
 import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function RegisterPage() {
     const { mutateAsync, isPending } = useMutation({
@@ -39,6 +40,9 @@ export default function RegisterPage() {
             const data = await response.json();
             console.log(data);
             if (response.ok) {
+                toast.success("Berhasil Registrasi!", {
+                    autoClose: 1500,
+                });
                 navigate("/login", { replace: true });
             }
         } catch (error) {

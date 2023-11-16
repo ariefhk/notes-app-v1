@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAccessToken } from "../lib/api";
+import { toast } from "react-toastify";
 // import { useNavigate } from "react-router-dom";
 
 export default function HomePage() {
@@ -28,6 +29,11 @@ export default function HomePage() {
         },
     });
 
+    const notify = () =>
+        toast.success("Wow so easy !", {
+            autoClose: 2000,
+        });
+
     if (isLoading) {
         return <h1>Loading...</h1>;
     }
@@ -36,17 +42,18 @@ export default function HomePage() {
         return <h1>Sorry you have error</h1>;
     }
 
-    if (isSuccess) {
-        console.log(todos.data);
-        return todos?.data.map((todo) => {
-            return <h1 key={todo.id}>{todo.body}</h1>;
-        });
-    }
+    // if (isSuccess) {
+    //     console.log(todos.data);
+    //     return todos?.data.map((todo) => {
+    //         return <h1 key={todo.id}>{todo.body}</h1>;
+    //     });
+    // }
 
     console.log("render page");
     return (
-        <div className='h-screen w-screen bg-red-600'>
+        <main className='h-screen w-screen bg-red-600'>
             <h1>test homepage</h1>
-        </div>
+            <button onClick={notify}>Notify !</button>
+        </main>
     );
 }

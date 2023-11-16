@@ -1,5 +1,6 @@
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 
 //component
 import NotesApp from "./components/NotesApp";
@@ -11,6 +12,7 @@ import LocaleContextProvider from "./providers/LocaleContextProvider";
 const queryClient = new QueryClient();
 
 //style
+import "react-toastify/dist/ReactToastify.css";
 import "./global.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -19,6 +21,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <ThemeContextProvider>
                 <LocaleContextProvider>
                     <NotesApp />
+                    <ToastContainer />
                 </LocaleContextProvider>
             </ThemeContextProvider>
         </QueryClientProvider>

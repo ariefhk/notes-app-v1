@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import useInput from "../hooks/useInput";
 import clsx from "clsx";
 import { putAccessToken } from "../lib/api";
+import { toast } from "react-toastify";
 
 export default function LoginPage() {
     const { mutateAsync, isPending } = useMutation({
@@ -42,11 +43,14 @@ export default function LoginPage() {
         }
 
         try {
-            const response = await mutateAsync({ name, email, password });
+            const response = await mutateAsync({ email, password });
             const data = await response.json();
             const token = data?.data?.accessToken;
             putAccessToken(token);
             if (response.ok) {
+                toast.success("Berhasil Login!", {
+                    autoClose: 1500,
+                });
                 navigate("/", { replace: true });
             }
         } catch (error) {
