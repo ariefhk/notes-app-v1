@@ -7,7 +7,7 @@ import { getAccessToken } from "../lib/api";
 
 export default function RequiredAuthProvider() {
     const navigate = useNavigate();
-    const { isSuccess } = useQuery({
+    const { isSuccess, isLoading } = useQuery({
         retry: false,
         queryKey: ["check-user"],
         queryFn: async ({ signal }) => {
@@ -25,6 +25,10 @@ export default function RequiredAuthProvider() {
             return res.json();
         },
     });
+
+    if (isLoading) {
+        return "";
+    }
 
     return isSuccess ? <Outlet /> : false;
 }
