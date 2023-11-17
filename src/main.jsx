@@ -15,6 +15,7 @@ import { createRoot } from "react-dom/client";
 import "react-toastify/dist/ReactToastify.css";
 import "./global.css";
 
+// render
 const rootElement = document.getElementById("root");
 const root = createRoot(rootElement);
 
