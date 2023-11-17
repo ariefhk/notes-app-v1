@@ -27,7 +27,7 @@ export default function RequiredAuthProvider() {
     });
 
     if (isLoading) {
-        return "";
+        return false;
     }
 
     return isSuccess ? <Outlet /> : false;
