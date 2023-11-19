@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import useInput from "../hooks/useInput";
 import clsx from "clsx";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
@@ -22,11 +22,14 @@ export default function RegisterPage() {
             console.log(err);
         },
     });
-
-    const [name, onNameChange] = useInput("");
-    const [email, onEmailChange] = useInput("");
-    const [password, onPasswordChange] = useInput("");
-    const [confirmPassword, onConfirmPasswordChange] = useInput("");
+    const { val: name, onValChange: onNameChange } = useInput("");
+    const { val: email, onValChange: onEmailChange } = useInput("");
+    const { val: password, onValChange: onPasswordChange } = useInput("");
+    // const [name, onNameChange] = useInput("");
+    // const [email, onEmailChange] = useInput("");
+    // const [password, onPasswordChange] = useInput("");
+    const { val: confirmPassword, onValChange: onConfirmPasswordChange } = useInput("");
+    // const [confirmPassword, onConfirmPasswordChange] = useInput("");
     const [isSubmitInput, setIsSubmitInput] = useState(false);
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
@@ -204,13 +207,16 @@ export default function RegisterPage() {
                     { fixed: !isSubmitInput },
                 )}>
                 <span className='text-[14px] leading-[20px]'>Sudah Punya Akun ? </span>{" "}
-                <span
+                {/* <span
                     className='cursor-pointer text-[14px] font-bold leading-[20px] text-blum-4'
                     onClick={() => {
                         navigate("/login", { replace: true });
                     }}>
                     Masuk Disini!
-                </span>
+                </span> */}
+                <Link to={"/login"} replace className='cursor-pointer text-[14px] font-bold leading-[20px] text-blum-4'>
+                    Masuk Disini!
+                </Link>
             </div>
         </section>
     );

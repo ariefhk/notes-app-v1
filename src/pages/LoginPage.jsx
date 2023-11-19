@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useInput from "../hooks/useInput";
 import clsx from "clsx";
 import { putAccessToken } from "../lib/api";
@@ -157,13 +157,12 @@ export default function LoginPage() {
                     { fixed: !isSubmitInput },
                 )}>
                 <span className='text-[14px] leading-[20px]'>Belum Punya Akun ? </span>{" "}
-                <span
-                    className='cursor-pointer text-[14px] font-bold leading-[20px] text-blum-4'
-                    onClick={() => {
-                        navigate("/register", { replace: true });
-                    }}>
+                <Link
+                    to={"/register"}
+                    replace
+                    className='cursor-pointer text-[14px] font-bold leading-[20px] text-blum-4'>
                     Daftar Disini!
-                </span>
+                </Link>
             </div>
         </section>
     );
