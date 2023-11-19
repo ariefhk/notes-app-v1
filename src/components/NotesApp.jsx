@@ -8,6 +8,7 @@ import RegisterPage from "../pages/RegisterPage";
 export default function NotesApp() {
     return (
         <Routes>
+            <Route path='*' element={<h1>Page not found!</h1>} />
             <Route path='/login' element={<LoginPage />} />
             <Route path='/register' element={<RegisterPage />} />
             <Route element={<RequiredAuthProvider />}>
