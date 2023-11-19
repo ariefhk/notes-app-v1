@@ -1,7 +1,10 @@
+//core
+import { useState, useContext } from "react";
+
 // third party
 import { useQuery } from "@tanstack/react-query";
-import { toast } from "react-toastify";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { useDebounce } from "@uidotdev/usehooks";
 
 // component
 import BottomNavigation from "../components/BottomNavigation";
@@ -9,13 +12,32 @@ import BottomNavigation from "../components/BottomNavigation";
 // api
 import { getAccessToken } from "../lib/api";
 
+//context
+// import { ThemeContext } from "../context/theme-context";
+import { LocaleContext } from "../context/locale-context";
+
 // utils
 import { formatDotString } from "../utils/formatDotString";
 
 // hooks
-// import useInput from "../hooks/useInput";
-import { useState } from "react";
-import { useDebounce } from "@uidotdev/usehooks";
+// --
+
+const reformatDateWithHour = (date, locale) => {
+    // const dayMonthYear = new Date(date).toLocaleString(locale, { day: "numeric", month: "long", year: "numeric" });
+    // const hours = new Date(date).toLocaleString(locale, { hour: "2-digit" });
+    // const minutes = new Date(date).toLocaleString(locale, { minute: "2-digit" });
+    // const formattedHours = hours < 10 ? `0${hours}` : String(hours);
+    // const formattedMinutes = minutes < 10 ? `0${minutes}` : String(minutes);
+    // const localeFormat =
+    //     locale === "id" ? `Pukul ${formattedHours}:${formattedMinutes}` : `${formattedHours}:${formattedMinutes}`;
+
+    const weekDay = new Date(date).toLocaleString(locale, { weekday: "long" });
+    const dayMonthYear = new Date(date).toLocaleString(locale, { day: "numeric", month: "long", year: "numeric" });
+    const time = new Date(date).toLocaleString(locale, { hour: "numeric", minute: "numeric", hour12: locale == "en" });
+    const localeFormat = locale === "id" ? `Pukul ${time}` : String(time);
+
+    return `${weekDay}, ${dayMonthYear} ${localeFormat}`;
+};
 
 export default function HomePage() {
     const [keywordTodo, setKeywordTodo] = useState("");
@@ -23,6 +45,7 @@ export default function HomePage() {
     const keywordParams = searchParams.get("keyword") || "";
     const debouncedKeywordParams = useDebounce(keywordParams, 300);
     const navigate = useNavigate();
+    const { locale } = useContext(LocaleContext);
 
     const {
         data: todos,
@@ -54,11 +77,6 @@ export default function HomePage() {
         },
     });
 
-    // const notify = () =>
-    //     toast.success("Wow so easy !", {
-    //         autoClose: 2000,
-    //     });
-
     if (isError) {
         return <h1>Sorry you have error</h1>;
     }
@@ -76,8 +94,6 @@ export default function HomePage() {
         refetch();
         setKeywordTodo(keyword);
     };
-
-    console.log("render home page");
 
     return (
         <main className='h-screen w-screen overflow-x-hidden'>
@@ -105,7 +121,9 @@ export default function HomePage() {
                                     <h1 className='text-[16px] font-bold leading-[22px]'>
                                         {formatDotString(todo?.title, 60)}
                                     </h1>
-                                    <span className='mt-[4px] text-[#8A8A8A8A]'>{todo?.createdAt}</span>
+                                    <span className='mt-[4px] text-[#8A8A8A8A]'>
+                                        {reformatDateWithHour(todo?.createdAt, locale)}
+                                    </span>
                                     <p className='mt-[16px] text-[14px] leading-[20px]'>
                                         {formatDotString(todo?.body, 150)}
                                     </p>

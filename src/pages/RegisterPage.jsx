@@ -67,13 +67,13 @@ export default function RegisterPage() {
                         Nama
                     </label>
                     <input
-                        type='email'
+                        type='text'
                         required
                         onFocus={() => setIsSubmitInput(true)}
                         onBlur={() => setIsSubmitInput(false)}
                         placeholder='Contoh: Jhon Doe'
                         id='name'
-                        className='h-[48px] max-w-[328px] rounded-rad16 border px-[12px] py-[16px] outline-blum-4'
+                        className='h-[48px]  rounded-rad16 border px-[12px] py-[16px] outline-blum-4'
                         name={name}
                         onChange={onNameChange}
                     />
@@ -90,7 +90,7 @@ export default function RegisterPage() {
                         onBlur={() => setIsSubmitInput(false)}
                         placeholder='Contoh: johndoe@gmail.com'
                         id='email'
-                        className='h-[48px] max-w-[328px] rounded-rad16 border px-[12px] py-[16px] outline-blum-4'
+                        className='h-[48px] rounded-rad16 border px-[12px] py-[16px] outline-blum-4'
                         name={email}
                         onChange={onEmailChange}
                     />
@@ -108,7 +108,7 @@ export default function RegisterPage() {
                             onFocus={() => setIsSubmitInput(true)}
                             onBlur={() => setIsSubmitInput(false)}
                             placeholder='Masukan Password'
-                            className='h-[48px] w-full max-w-[328px] cursor-pointer appearance-none rounded-rad16 border py-[16px] pl-[12px] pr-[48px] outline-blum-4'
+                            className='h-[48px] w-full  cursor-pointer appearance-none rounded-rad16 border py-[16px] pl-[12px] pr-[48px] outline-blum-4'
                             name={password}
                             onChange={onPasswordChange}
                         />
@@ -142,7 +142,7 @@ export default function RegisterPage() {
                             onFocus={() => setIsSubmitInput(true)}
                             onBlur={() => setIsSubmitInput(false)}
                             placeholder='Masukan Password yang sama'
-                            className='h-[48px] w-full max-w-[328px] cursor-pointer appearance-none rounded-rad16 border py-[16px] pl-[12px] pr-[48px] outline-blum-4'
+                            className='h-[48px] w-full  cursor-pointer appearance-none rounded-rad16 border py-[16px] pl-[12px] pr-[48px] outline-blum-4'
                             name={confirmPassword}
                             onChange={onConfirmPasswordChange}
                         />
@@ -169,7 +169,7 @@ export default function RegisterPage() {
                         disabled={isPending}
                         type='submit'
                         className={clsx(
-                            " flex h-[48px] w-full max-w-[328px] items-center justify-center gap-[16px] rounded-rad16 px-[6px] py-[3px] text-white",
+                            " flex h-[48px] w-full  items-center justify-center gap-[16px] rounded-rad16 px-[6px] py-[3px] text-white",
                             { "bg-blum-4": !isPending },
                             { "bg-blum-4 opacity-50": isPending },
                         )}>
