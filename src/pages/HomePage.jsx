@@ -82,13 +82,13 @@ export default function HomePage() {
         },
     });
 
-    if (isError) {
-        return <h1>Sorry you have error</h1>;
-    }
+    // if (isError) {
+    //     return <h1>Sorry you have error</h1>;
+    // }
 
-    if (isLoading) {
-        console.log("loading ...");
-    }
+    // if (isLoading) {
+    //     console.log("loading ...");
+    // }
 
     const handleKeywordOnChange = (keyword) => {
         if (keyword) {
@@ -112,10 +112,18 @@ export default function HomePage() {
                     placeholder='Cari Catatan Anda ...'
                     className='mt-[24px] h-[48px] w-full rounded-rad16 border px-[12px] py-[16px] outline-blum-4'
                 />
-                {isLoading && <h1>Loadingg ...</h1>}
                 <div
                     style={{ height: "calc(100vh - 220px)" }}
                     className='mt-[24px] grid  grid-cols-12 gap-[12px] overflow-y-scroll pb-[64px]'>
+                    {isLoading && (
+                        <>
+                            <div className='col-span-12  flex h-[200px] animate-pulse flex-col  rounded-rad16 border p-[12px] '>
+                                <div className='h-[16px] w-full rounded-full bg-gray-200'></div>
+                                <div className='mt-[4px] h-[16px] w-2/3 rounded-full bg-gray-200'></div>
+                                <div className='mt-[16px] w-full flex-1 rounded-[12px] bg-gray-200'></div>
+                            </div>
+                        </>
+                    )}
                     {isSuccess &&
                         todos?.map((todo) => {
                             // console.log(todo);
