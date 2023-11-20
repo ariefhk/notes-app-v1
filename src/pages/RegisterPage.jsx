@@ -25,11 +25,7 @@ export default function RegisterPage() {
     const { val: name, onValChange: onNameChange } = useInput("");
     const { val: email, onValChange: onEmailChange } = useInput("");
     const { val: password, onValChange: onPasswordChange } = useInput("");
-    // const [name, onNameChange] = useInput("");
-    // const [email, onEmailChange] = useInput("");
-    // const [password, onPasswordChange] = useInput("");
     const { val: confirmPassword, onValChange: onConfirmPasswordChange } = useInput("");
-    // const [confirmPassword, onConfirmPasswordChange] = useInput("");
     const [isSubmitInput, setIsSubmitInput] = useState(false);
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);

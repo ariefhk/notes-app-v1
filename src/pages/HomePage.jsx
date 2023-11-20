@@ -5,6 +5,7 @@ import { useState, useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useDebounce } from "@uidotdev/usehooks";
+import axios, { AxiosError } from "axios";
 
 // component
 import BottomNavigation from "../components/BottomNavigation";
@@ -52,28 +53,32 @@ export default function HomePage() {
         isError,
         isLoading,
         isSuccess,
-        refetch,
+        refetch: refetchTodos,
     } = useQuery({
         queryKey: ["getTodos", debouncedKeywordParams],
         queryFn: async ({ signal }) => {
-            const response = await fetch(`https://notes-api.dicoding.dev/v1/notes`, {
-                signal,
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${getAccessToken()}`,
-                },
-            });
+            try {
+                const responseAxios = await axios.get(`https://notes-api.dicoding.dev/v1/notes`, {
+                    signal,
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${getAccessToken()}`,
+                    },
+                });
 
-            if (!response.ok) {
-                navigate("/login", { replace: true });
-                throw new Error(response.statusText);
+                const hasilFilterKeywordAxios = responseAxios.data?.data.filter((todo) => {
+                    return todo.title.toLowerCase().includes(debouncedKeywordParams.toLowerCase());
+                });
+                return hasilFilterKeywordAxios;
+            } catch (error) {
+                if (error instanceof AxiosError) {
+                    if (error?.response?.status === 401) {
+                        navigate("/login", { replace: true });
+                        console.log(error.response.data);
+                        throw new Error("Access denied!");
+                    }
+                }
             }
-
-            const data = await response.json();
-            const hasilFilterKeyword = data?.data.filter((todo) => {
-                return todo.title.toLowerCase().includes(debouncedKeywordParams.toLowerCase());
-            });
-            return hasilFilterKeyword;
         },
     });
 
@@ -91,7 +96,7 @@ export default function HomePage() {
         } else {
             setSearchParams({});
         }
-        refetch();
+        refetchTodos();
         setKeywordTodo(keyword);
     };
 

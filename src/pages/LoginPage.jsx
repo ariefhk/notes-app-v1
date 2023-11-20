@@ -8,21 +8,44 @@ import { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import Swal from "sweetalert2";
 import Loader from "../components/Loader";
+import axios, { AxiosError } from "axios";
 
 export default function LoginPage() {
     const { mutateAsync, isPending } = useMutation({
         mutationKey: ["login"],
-        mutationFn: ({ email, password }) => {
-            return fetch(`https://notes-api.dicoding.dev/v1/login`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, password }),
-            });
-        },
-        onError: (err) => {
-            console.log(err);
+        mutationFn: async ({ email, password }) => {
+            try {
+                const response = await axios.post(
+                    `https://notes-api.dicoding.dev/v1/login`,
+                    { email, password },
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    },
+                );
+                const token = response.data.data.accessToken;
+                putAccessToken(token);
+                toast.success("Berhasil Login!", {
+                    autoClose: 1200,
+                });
+                navigate("/", { replace: true });
+
+                return response.data;
+            } catch (error) {
+                if (error instanceof AxiosError) {
+                    const errorData = error.response.data;
+                    console.log(error.response.data);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Gagal Login!",
+                        text: `${errorData?.message}`,
+                        timerProgressBar: true,
+                        timer: 1300,
+                    });
+                    throw new Error("Error Login!");
+                }
+            }
         },
     });
 
@@ -45,31 +68,7 @@ export default function LoginPage() {
         }
 
         try {
-            const response = await mutateAsync({ email, password });
-            const data = await response.json();
-
-            if (!response?.ok) {
-                Swal.fire({
-                    icon: "error",
-                    title: "Gagal Login!",
-                    text: `${data.message}`,
-                    timerProgressBar: true,
-                    timer: 1300,
-                });
-                return;
-            }
-
-            if (response.ok) {
-                const token = data?.data?.accessToken;
-                putAccessToken(token);
-                toast.success("Berhasil Login!", {
-                    autoClose: 1200,
-                });
-                navigate("/", { replace: true });
-            }
-
-            console.log(response);
-            console.log(data);
+            await mutateAsync({ email, password });
         } catch (error) {
             console.log(error.message);
         }
