@@ -5,13 +5,13 @@ import { useState, useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useDebounce } from "@uidotdev/usehooks";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 
 // component
 import BottomNavigation from "../components/BottomNavigation";
 
 // api
-import { getAccessToken } from "../lib/api";
+import { getActiveNotes } from "../axios/note";
 
 //context
 // import { ThemeContext } from "../context/theme-context";
@@ -19,38 +19,21 @@ import { LocaleContext } from "../context/locale-context";
 
 // utils
 import { formatDotString } from "../utils/formatDotString";
+import { reformatDate } from "../utils/reformatDate";
 
 // hooks
 // --
-
-const reformatDateWithHour = (date, locale) => {
-    // const dayMonthYear = new Date(date).toLocaleString(locale, { day: "numeric", month: "long", year: "numeric" });
-    // const hours = new Date(date).toLocaleString(locale, { hour: "2-digit" });
-    // const minutes = new Date(date).toLocaleString(locale, { minute: "2-digit" });
-    // const formattedHours = hours < 10 ? `0${hours}` : String(hours);
-    // const formattedMinutes = minutes < 10 ? `0${minutes}` : String(minutes);
-    // const localeFormat =
-    //     locale === "id" ? `Pukul ${formattedHours}:${formattedMinutes}` : `${formattedHours}:${formattedMinutes}`;
-
-    const weekDay = new Date(date).toLocaleString(locale, { weekday: "long" });
-    const dayMonthYear = new Date(date).toLocaleString(locale, { day: "numeric", month: "long", year: "numeric" });
-    const time = new Date(date).toLocaleString(locale, { hour: "numeric", minute: "numeric", hour12: locale == "en" });
-    const localeFormat = locale === "id" ? `Pukul ${time}` : String(time);
-
-    return `${weekDay}, ${dayMonthYear} ${localeFormat}`;
-};
 
 export default function HomePage() {
     const [keywordTodo, setKeywordTodo] = useState("");
     const [searchParams, setSearchParams] = useSearchParams();
     const keywordParams = searchParams.get("keyword") || "";
     const debouncedKeywordParams = useDebounce(keywordParams, 300);
-    const navigate = useNavigate();
     const { locale } = useContext(LocaleContext);
+    const navigate = useNavigate();
 
     const {
         data: todos,
-        isError,
         isLoading,
         isSuccess,
         refetch: refetchTodos,
@@ -58,18 +41,11 @@ export default function HomePage() {
         queryKey: ["getTodos", debouncedKeywordParams],
         queryFn: async ({ signal }) => {
             try {
-                const responseAxios = await axios.get(`https://notes-api.dicoding.dev/v1/notes`, {
-                    signal,
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${getAccessToken()}`,
-                    },
-                });
+                const response = await getActiveNotes({ signal });
 
-                const hasilFilterKeywordAxios = responseAxios.data?.data.filter((todo) => {
+                return response?.data.filter((todo) => {
                     return todo.title.toLowerCase().includes(debouncedKeywordParams.toLowerCase());
                 });
-                return hasilFilterKeywordAxios;
             } catch (error) {
                 if (error instanceof AxiosError) {
                     if (error?.response?.status === 401) {
@@ -135,7 +111,7 @@ export default function HomePage() {
                                         {formatDotString(todo?.title, 60)}
                                     </h1>
                                     <span className='mt-[4px] text-[#8A8A8A8A]'>
-                                        {reformatDateWithHour(todo?.createdAt, locale)}
+                                        {reformatDate(todo?.createdAt, locale)}
                                     </span>
                                     <p className='mt-[16px] text-[14px] leading-[20px]'>
                                         {formatDotString(todo?.body, 150)}

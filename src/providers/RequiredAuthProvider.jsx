@@ -1,10 +1,10 @@
 // third party
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, Outlet } from "react-router-dom";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 
 // lib
-import { getAccessToken } from "../lib/api";
+import { getUserLogged } from "../axios/auth";
 
 export default function RequiredAuthProvider() {
     const navigate = useNavigate();
@@ -13,15 +13,9 @@ export default function RequiredAuthProvider() {
         queryKey: ["check-user"],
         queryFn: async ({ signal }) => {
             try {
-                const responseAxios = await axios.get("https://notes-api.dicoding.dev/v1/users/me", {
-                    signal,
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${getAccessToken()}`,
-                    },
-                });
+                const response = await getUserLogged({ signal });
 
-                return responseAxios.data;
+                return response;
             } catch (error) {
                 if (error instanceof AxiosError) {
                     if (error?.response?.status === 401) {
