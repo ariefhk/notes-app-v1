@@ -8,56 +8,52 @@ import { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import Swal from "sweetalert2";
 import Loader from "../components/Loader";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
+import { login } from "../axios/auth";
+import useCheckInputField from "../hooks/useCheckInputField";
+import { cn } from "../utils/tailwind-utils";
 
 export default function LoginPage() {
-    const { mutateAsync, isPending } = useMutation({
+    const navigate = useNavigate();
+    const { val: email, onValChange: onEmailChange } = useInput("");
+    const { val: password, onValChange: onPasswordChange } = useInput("");
+    const { statusInput, makeStatusInputActive, makeStatusInputNonActive } = useCheckInputField();
+
+    const [showPassword, setShowPassword] = useState(false);
+    const togglePassword = () => setShowPassword((prevState) => !prevState);
+
+    const { mutate, isPending } = useMutation({
         mutationKey: ["login"],
         mutationFn: async ({ email, password }) => {
-            try {
-                const response = await axios.post(
-                    `https://notes-api.dicoding.dev/v1/login`,
-                    { email, password },
-                    {
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    },
-                );
-                const token = response.data.data.accessToken;
-                putAccessToken(token);
-                toast.success("Berhasil Login!", {
-                    autoClose: 1200,
-                });
-                navigate("/", { replace: true });
+            const response = await login({ email, password });
+            return response;
+        },
+        onSuccess: (data) => {
+            const token = data?.data?.accessToken;
+            putAccessToken(token);
 
-                return response.data;
-            } catch (error) {
-                if (error instanceof AxiosError) {
-                    const errorData = error.response.data;
-                    console.log(error.response.data);
-                    Swal.fire({
-                        icon: "error",
-                        title: "Gagal Login!",
-                        text: `${errorData?.message}`,
-                        timerProgressBar: true,
-                        timer: 1300,
-                    });
-                    throw new Error("Error Login!");
-                }
+            toast.success("Berhasil Login!", {
+                autoClose: 1200,
+            });
+
+            navigate("/", { replace: true });
+        },
+        onError: (error) => {
+            if (error instanceof AxiosError) {
+                const errorData = error.response.data;
+                console.log(error.response.data);
+                Swal.fire({
+                    icon: "error",
+                    title: "Gagal Login!",
+                    text: `${errorData?.message}`,
+                    timerProgressBar: true,
+                    timer: 1300,
+                });
             }
         },
     });
 
-    const navigate = useNavigate();
-    // const [email, onEmailChange] = useInput("");
-    const { val: email, onValChange: onEmailChange } = useInput("");
-    const { val: password, onValChange: onPasswordChange } = useInput("");
-    const [isSubmitInput, setIsSubmitInput] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
-    const togglePassword = () => setShowPassword((prevState) => !prevState);
-
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
 
         const checkInput = email || password;
@@ -66,12 +62,7 @@ export default function LoginPage() {
             alert("input cant be empty");
             return;
         }
-
-        try {
-            await mutateAsync({ email, password });
-        } catch (error) {
-            console.log(error.message);
-        }
+        mutate({ email, password });
     };
 
     return (
@@ -87,8 +78,8 @@ export default function LoginPage() {
                         disabled={isPending}
                         type='email'
                         required
-                        onFocus={() => setIsSubmitInput(true)}
-                        onBlur={() => setIsSubmitInput(false)}
+                        onFocus={() => makeStatusInputActive()}
+                        onBlur={() => makeStatusInputNonActive()}
                         placeholder='Contoh: johndoe@gmail.com'
                         id='email'
                         className='h-[48px]  rounded-rad16 border px-[12px] py-[16px] outline-blum-4'
@@ -107,8 +98,8 @@ export default function LoginPage() {
                             type={showPassword ? "text" : "password"}
                             id='password'
                             required
-                            onFocus={() => setIsSubmitInput(true)}
-                            onBlur={() => setIsSubmitInput(false)}
+                            onFocus={() => makeStatusInputActive()}
+                            onBlur={() => makeStatusInputNonActive()}
                             placeholder='Masukan Password'
                             className='h-[48px] w-full cursor-pointer appearance-none rounded-rad16 border py-[16px] pl-[12px] pr-[48px] outline-blum-4'
                             name={password}
@@ -117,14 +108,14 @@ export default function LoginPage() {
                         {showPassword ? (
                             <FiEye
                                 onClick={togglePassword}
-                                className={clsx(
+                                className={cn(
                                     "absolute right-[12px] top-[50%] mr-3 h-[24px] w-[24px] translate-y-[-50%] cursor-pointer text-blum-4",
                                 )}
                             />
                         ) : (
                             <FiEyeOff
                                 onClick={togglePassword}
-                                className={clsx(
+                                className={cn(
                                     "absolute right-[12px] top-[50%] mr-3 h-[24px] w-[24px] translate-y-[-50%] cursor-pointer text-[#8A8A8A]",
                                 )}
                             />
@@ -136,7 +127,7 @@ export default function LoginPage() {
                     <button
                         disabled={isPending}
                         type='submit'
-                        className={clsx(
+                        className={cn(
                             " flex h-[48px] w-full items-center justify-center gap-[16px] rounded-rad16 px-[6px] py-[3px] text-white",
                             { "bg-blum-4": !isPending },
                             { "bg-blum-4 opacity-50": isPending },
@@ -152,8 +143,8 @@ export default function LoginPage() {
             <div
                 className={clsx(
                     " bottom-[66px] left-[50%] flex w-max translate-x-[-50%] items-center justify-center gap-[8px]",
-                    { hidden: isSubmitInput },
-                    { fixed: !isSubmitInput },
+                    { hidden: statusInput },
+                    { fixed: !statusInput },
                 )}>
                 <span className='text-[14px] leading-[20px]'>Belum Punya Akun ? </span>{" "}
                 <Link

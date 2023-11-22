@@ -43,8 +43,8 @@ export default function HomePage() {
             try {
                 const response = await getActiveNotes({ signal });
 
-                return response?.data.filter((todo) => {
-                    return todo.title.toLowerCase().includes(debouncedKeywordParams.toLowerCase());
+                return response?.data?.filter((todo) => {
+                    return todo?.title?.toLowerCase().includes(debouncedKeywordParams.toLowerCase());
                 });
             } catch (error) {
                 if (error instanceof AxiosError) {
